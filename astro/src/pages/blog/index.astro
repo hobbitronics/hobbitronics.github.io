@@ -2,18 +2,75 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { SITE_TITLE } from '../../consts';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog')).sort(
-	(a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf()
+	(a: any, b: any) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf()
 );
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title="Writing" description="Blog posts about old hardware, Linux, and astrophotography" />
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			main {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 3rem 1em;
+			}
+			h1 {
+				margin-top: 0;
+				margin-bottom: 2rem;
+				border-bottom: 1px solid var(--border);
+				padding-bottom: 1rem;
+			}
+			ul {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			ul li {
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				padding: 1em 0;
+				border-bottom: 1px solid var(--border);
+				gap: 1em;
+			}
+			ul li:last-child {
+				border-bottom: none;
+			}
+			ul li a {
+				text-decoration: none;
+				font-weight: 500;
+				flex: 1;
+				color: var(--accent);
+			}
+			ul li a:hover {
+				color: var(--accent-dark);
+				text-decoration: underline;
+			}
+			.date {
+				color: var(--text-secondary);
+				font-size: 0.9em;
+				white-space: nowrap;
+			}
+			@media (max-width: 720px) {
+				main {
+					padding: 2rem 1em;
+				}
+				ul li {
+					flex-direction: column;
+					gap: 0.5em;
+				}
+				.date {
+					font-size: 0.85em;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
@@ -24,7 +81,7 @@ const posts = (await getCollection('blog')).sort(
 					<p>No blog posts found</p>
 				) : (
 					<ul class="posts-list">
-						{posts.map((post) => (
+						{posts.map((post: any) => (
 							<li>
 								<a href={`/blog/${post.id}/`}>{post.data.title}</a>
 								<p class="post-date">
