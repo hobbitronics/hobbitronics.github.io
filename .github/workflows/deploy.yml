@@ -1,0 +1,39 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        working-directory: ./astro
+        run: npm ci
+      
+      - name: Build site
+        working-directory: ./astro
+        run: npm run build
+      
+      - name: Deploy to root
+        run: |
+          rm -rf dist node_modules .git/worktrees/gh-pages 2>/dev/null || true
+          cp -r astro/dist/* .
+          git config --global user.email "deploy@github.com"
+          git config --global user.name "GitHub Actions"
+          git add -A
+          git commit -m "Deploy site" || true
+          git push origin $(git rev-parse --abbrev-ref HEAD)

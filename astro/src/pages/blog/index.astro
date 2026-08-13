@@ -1,0 +1,77 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf()
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="Writing" description="Blog posts about old hardware, Linux, and astrophotography" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Writing</h1>
+			<section class="posts">
+				{posts.length === 0 ? (
+					<p>No blog posts found</p>
+				) : (
+					<ul class="posts-list">
+						{posts.map((post) => (
+							<li>
+								<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								<p class="post-date">
+									{new Date(post.data.pubDate).toLocaleDateString('en-US', {
+										year: 'numeric',
+										month: 'long',
+										day: 'numeric',
+									})}
+								</p>
+								<p class="post-description">{post.data.description}</p>
+							</li>
+						))}
+					</ul>
+				)}
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.posts-list {
+		list-style: none;
+		padding: 0;
+	}
+	.posts-list li {
+		padding: 2em 0;
+		border-bottom: 1px solid var(--border);
+	}
+	.posts-list li:last-child {
+		border-bottom: none;
+	}
+	.posts-list a {
+		font-size: 1.25em;
+		font-weight: 600;
+		text-decoration: none;
+	}
+	.posts-list a:hover {
+		text-decoration: underline;
+	}
+	.post-date {
+		margin: 0.5em 0 0 0;
+		color: var(--text-secondary);
+		font-size: 0.9em;
+	}
+	.post-description {
+		margin: 0.75em 0 0 0;
+		color: var(--text-secondary);
+	}
+</style>

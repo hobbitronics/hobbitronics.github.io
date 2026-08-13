@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-bvzihdzo> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" /> --><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Michael Wilson" href="https://example.com/rss.xml"><meta name="generator" content="Astro v4.16.19"><!-- Canonical URL --><link rel="canonical" href="https://example.com/blog/first-post.md/"><!-- Primary Meta Tags --><title>Automating Astrophotography With an Old Canon DSLR and gphoto2</title><meta name="description" content="Fun with a 15 year old camera and Linux"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://example.com/blog/first-post.md/"><meta property="og:title" content="Automating Astrophotography With an Old Canon DSLR and gphoto2"><meta property="og:description" content="Fun with a 15 year old camera and Linux"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/about.BPaIGaGV.css">
+<style>main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3rem 1em;color:var(--text)}.title[data-astro-cid-bvzihdzo]{margin-bottom:2em;padding-bottom:1.5em;border-bottom:1px solid var(--border);line-height:1.3}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em;font-size:2.5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:1em;color:var(--text-secondary);font-size:.95em}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic;margin-top:.5em}article[data-astro-cid-bvzihdzo]{color:var(--text)}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h1 data-astro-cid-3ef6ksr2><a href="/" data-astro-cid-3ef6ksr2>Michael Wilson</a></h1> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/" data-astro-cid-eimmu3lg> Home </a>  <a href="/blog" data-astro-cid-eimmu3lg> Writing </a>  <a href="/about" data-astro-cid-eimmu3lg> About </a>  </div> </nav> </header>  <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <h1 data-astro-cid-bvzihdzo>Automating Astrophotography With an Old Canon DSLR and gphoto2</h1> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-08-09T14:30:00.000Z"> Aug 10, 2026 </time>  </div> </div>  <p>I recently became interested in astrophotography and bought a cheap old Canon DSLR to play around with. After watching several videos on how to capture and stack photos of the night sky I learned I needed a few more things to make the process easier. The first, a tripod and the second an intervalometer or an interval meter. It’s basically a remote for the camera that allows you to program a set number of shots so you won’t have to touch the camera between shots and disturb the image. I don’t know why Canon didn’t include this in the camera itself, but you can only shoot up to 10 continuous photos (per shutter press) without one.</p>
+<p>After ordering an intervalometer from China I did a little more digging and found that you can control Canon DSLRs using Canon’s EOS utility. The version that supports my 1100d is outdated, but I still got it to work on my also outdated MacOs 13 install on my 2015 Macbook pro 15 inch.</p>
+<p>You probably noticed the gear I tend to work with is all old.</p>
+<p>While the EOS utility seemed to work fine, its graphical feature set lacks some of the things I would rather automate. You don’t want to take 100 photos and then realize one of your settings was wrong.</p>
+<p>While looking up how to check my shutter count, I found
+gphoto2. A command line utility for Unix like operating systems used to control digital cameras. You can automate the settings for your astronomy setup, program the number of shots and intervals and even save the photos directly to your disk or network storage.</p>
+<p>After growing impatient with Homebrew building gphoto2 from scratch, I fired up a Linux machine and installed it with dnf.</p>
+<p>Of course, there was a hurdle to overcome before I could run any commands. gphoto2 was being blocked because GVFS was using the camera to make its storage available to the file system.</p>
+<p>I found the solution in this 2014 blog post about using a Canon camera and gphoto2 on Linux, which explains that the GVFS camera processes need to be stopped before gphoto2 can access the camera directly.</p>
+<p>Here’s how I fixed it:</p>
+<p>killall gvfs-gphoto2-volume-monitor gvfsd-gphoto2</p>
+<p>I was then able to get the shutter count, which was scary high but still less than Canon’s stated 100k design spec.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>gphoto2 --get-config /main/status/shuttercounter</span></span>
+<span class="line"><span></span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Label: Shutter Counter                                                           </span></span>
+<span class="line"><span>Readonly: 1  </span></span>
+<span class="line"><span>Type: TEXT  </span></span>
+<span class="line"><span>Current: 68394  </span></span>
+<span class="line"><span>END</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>I then experimented with settings commands and interval shots:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>gphoto2 --set-config /main/imgsettings/imgformat=RAW --set-config /main/imgsettings/iso=800 --set-config /main/capturesettings/shutterspeed=2 --set-config /main/capturesettings/aperture=3.5 --frames 200 --interval 3 --capture-image-and-download</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>Note the interval needs to be longer than the shutter speed to allow the camera to prepare to take the next shot. Next I vibe coded a basic script:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#!/bin/bash</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>echo "Releasing USB lock from system volume monitors..."</span></span>
+<span class="line"><span>systemctl --user stop gvfs-gphoto2-volume-monitor.service 2>/dev/null</span></span>
+<span class="line"><span>killall gvfs-gphoto2-volume-monitor gvfsd-gphoto2 2>/dev/null</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>SESSION_DIR="astro_$(date +%Y-%m-%d_%H-%M)"</span></span>
+<span class="line"><span>echo "Creating session directory: $SESSION_DIR"</span></span>
+<span class="line"><span>mkdir -p "$SESSION_DIR"</span></span>
+<span class="line"><span>cd "$SESSION_DIR" || exit</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>echo "Starting sequence: 200 RAW frames at ISO 800, 2s, f/3.5..."</span></span>
+<span class="line"><span>gphoto2 \</span></span>
+<span class="line"><span>  --set-config /main/imgsettings/imgformat=RAW \</span></span>
+<span class="line"><span>  --set-config /main/imgsettings/iso=800 \</span></span>
+<span class="line"><span>  --set-config /main/capturesettings/shutterspeed=2 \</span></span>
+<span class="line"><span>  --set-config /main/capturesettings/aperture=3.5 \</span></span>
+<span class="line"><span>  --filename "astro_shot_%03n.%C" \</span></span>
+<span class="line"><span>  --frames 200 \</span></span>
+<span class="line"><span>  --interval 3 \</span></span>
+<span class="line"><span>  --capture-image-and-download</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>echo "Sequence complete! Restoring system volume monitor..."</span></span>
+<span class="line"><span>systemctl --user start gvfs-gphoto2-volume-monitor.service 2>/dev/null</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>I may have gotten a bit carried away as the above script is probably adequate for most people. One feauture you may appreciate is a live view, which can help focussing your lens by making the stars as small as possible. I also added prompts with the camera’s available settings, validity checks and a battery level check. It’s hard to draw a line when you can add features so easily. After all, the sky’s the limit:</p>
+<p>See the latest script here: <a href="https://github.com/hobbitronics/astro">https://github.com/hobbitronics/astro</a></p>
+<details>
+<summary>Show the full capture script</summary>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D">#!/bin/bash</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">MONITOR_STOPPED</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">restore_volume_monitor</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> [ </span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">$MONITOR_STOPPED</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> -eq</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8"> ]; </span><span style="color:#F97583">then</span></span>
+<span class="line"><span style="color:#B392F0">        systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> start</span><span style="color:#9ECBFF"> gvfs-gphoto2-volume-monitor.service</span><span style="color:#F97583"> 2></span><span style="color:#9ECBFF">/dev/null</span></span>
+<span class="line"><span style="color:#E1E4E8">        MONITOR_STOPPED</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">0</span></span>
+<span class="line"><span style="color:#F97583">    fi</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">trap</span><span style="color:#9ECBFF"> restore_volume_monitor</span><span style="color:#9ECBFF"> EXIT</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">get_config_choices</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">    local</span><span style="color:#E1E4E8"> config_path</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">$1</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#F97583">    local</span><span style="color:#E1E4E8"> fallback_choices</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">$2</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#F97583">    local</span><span style="color:#E1E4E8"> choices</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    choices</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">gphoto2</span><span style="color:#79B8FF"> --get-config</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$config_path</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> 2></span><span style="color:#9ECBFF">/dev/null</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> awk</span><span style="color:#9ECBFF"> '</span></span>
+<span class="line"><span style="color:#9ECBFF">        /^Choice:/ {</span></span>
+<span class="line"><span style="color:#9ECBFF">            sub(/^Choice:[[:space:]]+[0-9]+[[:space:]]+/, "")</span></span>
+<span class="line"><span style="color:#9ECBFF">            if (choices != "") choices = choices ", "</span></span>
+<span class="line"><span style="color:#9ECBFF">            choices = choices $0</span></span>
+<span class="line"><span style="color:#9ECBFF">        }</span></span>
+<span class="line"><span style="color:#9ECBFF">        END {</span></span>
+<span class="line"><span style="color:#9ECBFF">            if (choices != "") print choices</span></span>
+<span class="line"><span style="color:#9ECBFF">        }</span></span>
+<span class="line"><span style="color:#9ECBFF">    '</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> [ </span><span style="color:#F97583">-n</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$choices</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8"> ]; </span><span style="color:#F97583">then</span></span>
+<span class="line"><span style="color:#79B8FF">        echo</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$choices</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#F97583">    else</span></span>
+<span class="line"><span style="color:#79B8FF">        echo</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$fallback_choices</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#F97583">    fi</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Ask for capture settings</span></span>
+<span class="line"><span style="color:#79B8FF">read</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> "Number of frames [1]: "</span><span style="color:#9ECBFF"> TOTAL_FRAMES</span></span>
+<span class="line"><span style="color:#E1E4E8">TOTAL_FRAMES</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">${TOTAL_FRAMES</span><span style="color:#F97583">:-</span><span style="color:#E1E4E8">1}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">read</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> "Interval between shots in seconds [12]: "</span><span style="color:#9ECBFF"> INTERVAL</span></span>
+<span class="line"><span style="color:#E1E4E8">INTERVAL</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">${INTERVAL</span><span style="color:#F97583">:-</span><span style="color:#E1E4E8">12}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Capture settings:"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "  Frames:       </span><span style="color:#E1E4E8">$TOTAL_FRAMES</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "  Interval:     ${</span><span style="color:#E1E4E8">INTERVAL</span><span style="color:#9ECBFF">}s"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 1. Kill background processes to free up the USB interface</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Releasing USB lock from system volume monitors..."</span></span>
+<span class="line"><span style="color:#B392F0">systemctl</span><span style="color:#79B8FF"> --user</span><span style="color:#9ECBFF"> stop</span><span style="color:#9ECBFF"> gvfs-gphoto2-volume-monitor.service</span><span style="color:#F97583"> 2></span><span style="color:#9ECBFF">/dev/null</span></span>
+<span class="line"><span style="color:#B392F0">killall</span><span style="color:#9ECBFF"> gvfs-gphoto2-volume-monitor</span><span style="color:#9ECBFF"> gvfsd-gphoto2</span><span style="color:#F97583"> 2></span><span style="color:#9ECBFF">/dev/null</span></span>
+<span class="line"><span style="color:#E1E4E8">MONITOR_STOPPED</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 2. Check if the camera is physically connected and detected</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Checking camera connection..."</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#F97583"> !</span><span style="color:#B392F0"> gphoto2</span><span style="color:#79B8FF"> --auto-detect</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> grep</span><span style="color:#79B8FF"> -q</span><span style="color:#9ECBFF"> "usb"</span><span style="color:#E1E4E8">; </span><span style="color:#F97583">then</span></span>
+<span class="line"><span style="color:#79B8FF">    echo</span><span style="color:#9ECBFF"> "❌ ERROR: Camera not detected! Check your USB cable and power switch."</span></span>
+<span class="line"><span style="color:#79B8FF">    exit</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#F97583">fi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "✓ Camera detected successfully."</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 3. Check battery status</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Checking battery level..."</span></span>
+<span class="line"><span style="color:#E1E4E8">BATTERY_INFO</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">gphoto2</span><span style="color:#79B8FF"> --get-config</span><span style="color:#9ECBFF"> /main/status/batterylevel</span><span style="color:#F97583"> 2></span><span style="color:#9ECBFF">/dev/null</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">BATTERY_VAL</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$BATTERY_INFO</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> grep</span><span style="color:#9ECBFF"> "Current:"</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> awk</span><span style="color:#9ECBFF"> '{print $2}'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> [ </span><span style="color:#F97583">-z</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$BATTERY_VAL</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8"> ]; </span><span style="color:#F97583">then</span></span>
+<span class="line"><span style="color:#79B8FF">    echo</span><span style="color:#9ECBFF"> "⚠️ WARNING: Could not read battery level. Proceeding with caution."</span></span>
+<span class="line"><span style="color:#F97583">else</span></span>
+<span class="line"><span style="color:#79B8FF">    echo</span><span style="color:#9ECBFF"> "✓ Battery level is at: </span><span style="color:#E1E4E8">$BATTERY_VAL</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> [[ </span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">$BATTERY_VAL</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> =~</span><span style="color:#E1E4E8"> ^[0-9]+$ ]] &#x26;&#x26; [ </span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">$BATTERY_VAL</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> -lt</span><span style="color:#79B8FF"> 20</span><span style="color:#E1E4E8"> ]; </span><span style="color:#F97583">then</span></span>
+<span class="line"><span style="color:#79B8FF">        echo</span><span style="color:#9ECBFF"> "❌ ERROR: Battery is too low (</span><span style="color:#E1E4E8">$BATTERY_VAL</span><span style="color:#9ECBFF">%). Recharge before starting."</span></span>
+<span class="line"><span style="color:#79B8FF">        exit</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#F97583">    fi</span></span>
+<span class="line"><span style="color:#F97583">fi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">SHUTTER_OPTIONS</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">get_config_choices</span><span style="color:#9ECBFF"> "/main/capturesettings/shutterspeed"</span><span style="color:#9ECBFF"> "bulb, 1, 1/60, 1/125, 1/250"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">APERTURE_OPTIONS</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">get_config_choices</span><span style="color:#9ECBFF"> "/main/capturesettings/aperture"</span><span style="color:#9ECBFF"> "3.5, 5.6, 8, 11, 16"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">ISO_OPTIONS</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#B392F0">get_config_choices</span><span style="color:#9ECBFF"> "/main/imgsettings/iso"</span><span style="color:#9ECBFF"> "100, 200, 400, 800, 1600"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Available ISO options: </span><span style="color:#E1E4E8">$ISO_OPTIONS</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">read</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> "ISO [1600] (enter one of the listed values): "</span><span style="color:#9ECBFF"> ISO</span></span>
+<span class="line"><span style="color:#E1E4E8">ISO</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">${ISO</span><span style="color:#F97583">:-</span><span style="color:#E1E4E8">1600}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Available shutter speed options: </span><span style="color:#E1E4E8">$SHUTTER_OPTIONS</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">read</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> "Shutter speed [10] (enter one of the listed values): "</span><span style="color:#9ECBFF"> SHUTTER_SPEED</span></span>
+<span class="line"><span style="color:#E1E4E8">SHUTTER_SPEED</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">${SHUTTER_SPEED</span><span style="color:#F97583">:-</span><span style="color:#E1E4E8">10}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Available aperture options: </span><span style="color:#E1E4E8">$APERTURE_OPTIONS</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">read</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> "Aperture [3.5] (enter one of the listed values): "</span><span style="color:#9ECBFF"> APERTURE</span></span>
+<span class="line"><span style="color:#E1E4E8">APERTURE</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">${APERTURE</span><span style="color:#F97583">:-</span><span style="color:#E1E4E8">3.5}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Capture settings:"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "  Frames:       </span><span style="color:#E1E4E8">$TOTAL_FRAMES</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "  Interval:     ${</span><span style="color:#E1E4E8">INTERVAL</span><span style="color:#9ECBFF">}s"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "  ISO:          </span><span style="color:#E1E4E8">$ISO</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "  Shutter:      </span><span style="color:#E1E4E8">$SHUTTER_SPEED</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "  Aperture:     </span><span style="color:#E1E4E8">$APERTURE</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">read</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> "Start capture? [Y/n]: "</span><span style="color:#9ECBFF"> CONFIRM</span></span>
+<span class="line"><span style="color:#E1E4E8">CONFIRM</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">${CONFIRM</span><span style="color:#F97583">:-</span><span style="color:#E1E4E8">Y}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> [[ </span><span style="color:#F97583">!</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$CONFIRM</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> =~</span><span style="color:#E1E4E8"> ^[Yy]$ ]]; </span><span style="color:#F97583">then</span></span>
+<span class="line"><span style="color:#79B8FF">    echo</span><span style="color:#9ECBFF"> "Cancelled."</span></span>
+<span class="line"><span style="color:#79B8FF">    exit</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#F97583">fi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 4. Create a uniquely named folder for tonight's session</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">SESSION_DIR</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"astro_$(</span><span style="color:#B392F0">date</span><span style="color:#9ECBFF"> +%Y-%m-%d_%H-%M)"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Creating session directory: </span><span style="color:#E1E4E8">$SESSION_DIR</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#B392F0">mkdir</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$SESSION_DIR</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$SESSION_DIR</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> ||</span><span style="color:#79B8FF"> exit</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 5. Set camera configurations</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Configuring camera settings..."</span></span>
+<span class="line"><span style="color:#B392F0">gphoto2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">    --set-config</span><span style="color:#9ECBFF"> /main/imgsettings/imgformat=RAW</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">    --set-config</span><span style="color:#9ECBFF"> /main/imgsettings/iso="</span><span style="color:#E1E4E8">$ISO</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">    --set-config</span><span style="color:#9ECBFF"> /main/capturesettings/shutterspeed="</span><span style="color:#E1E4E8">$SHUTTER_SPEED</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">    --set-config</span><span style="color:#9ECBFF"> /main/capturesettings/aperture="</span><span style="color:#E1E4E8">$APERTURE</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#F97583">    ></span><span style="color:#9ECBFF"> /dev/null</span><span style="color:#F97583"> 2>&#x26;1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 6. Capture loop with progress bar</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Starting capture sequence..."</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> ((i</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">; i</span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8">TOTAL_FRAMES; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">)); </span><span style="color:#F97583">do</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Calculate progress</span></span>
+<span class="line"><span style="color:#E1E4E8">    PERCENT</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(( </span><span style="color:#B392F0">i</span><span style="color:#79B8FF"> *</span><span style="color:#79B8FF"> 100</span><span style="color:#9ECBFF"> /</span><span style="color:#9ECBFF"> TOTAL_FRAMES</span><span style="color:#E1E4E8"> ))</span></span>
+<span class="line"><span style="color:#E1E4E8">    BAR_LENGTH</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(( </span><span style="color:#B392F0">PERCENT</span><span style="color:#9ECBFF"> /</span><span style="color:#79B8FF"> 4</span><span style="color:#E1E4E8"> ))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Construct progress bar</span></span>
+<span class="line"><span style="color:#E1E4E8">    BAR</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">$(</span><span style="color:#79B8FF">printf</span><span style="color:#9ECBFF"> "%${</span><span style="color:#E1E4E8">BAR_LENGTH</span><span style="color:#9ECBFF">}s"</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> tr</span><span style="color:#9ECBFF"> ' '</span><span style="color:#9ECBFF"> '#'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Print progress</span></span>
+<span class="line"><span style="color:#79B8FF">    printf</span><span style="color:#9ECBFF"> "\rProgress: [%-25s] %d%% (%d/%d frames)"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">        "</span><span style="color:#E1E4E8">$BAR</span><span style="color:#9ECBFF">"</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$PERCENT</span><span style="color:#9ECBFF">"</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$i</span><span style="color:#9ECBFF">"</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$TOTAL_FRAMES</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Capture frame</span></span>
+<span class="line"><span style="color:#B392F0">    gphoto2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">        --filename</span><span style="color:#9ECBFF"> "astro_shot_$(</span><span style="color:#79B8FF">printf</span><span style="color:#9ECBFF"> "%03d" "</span><span style="color:#E1E4E8">$i</span><span style="color:#9ECBFF">").%C"</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">        --capture-image-and-download</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#F97583">        ></span><span style="color:#9ECBFF"> /dev/null</span><span style="color:#F97583"> 2>&#x26;1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Wait for next shot</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> [ </span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">$i</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> -lt</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$TOTAL_FRAMES</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8"> ]; </span><span style="color:#F97583">then</span></span>
+<span class="line"><span style="color:#B392F0">        sleep</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$INTERVAL</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#F97583">    fi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">done</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "🎉 Sequence complete!"</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Images saved in: $(</span><span style="color:#79B8FF">pwd</span><span style="color:#9ECBFF">)"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 7. Restore system services</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> "Restoring system volume monitor..."</span></span>
+<span class="line"><span style="color:#B392F0">restore_volume_monitor</span></span>
+<span class="line"><span style="color:#79B8FF">trap</span><span style="color:#9ECBFF"> -</span><span style="color:#9ECBFF"> EXIT</span></span>
+<span class="line"></span></code></pre>
+</details>  </div> </article> </main> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Michael Wilson. All rights reserved.
+<div class="social-links" data-astro-cid-sz7xmlte> <a href="https://github.com/hobbitronics" target="_blank" data-astro-cid-sz7xmlte> <span class="sr-only" data-astro-cid-sz7xmlte>Go to GitHub</span> <svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24" data-astro-cid-sz7xmlte><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" data-astro-cid-sz7xmlte></path></svg> </a> </div> </footer>  </body></html>

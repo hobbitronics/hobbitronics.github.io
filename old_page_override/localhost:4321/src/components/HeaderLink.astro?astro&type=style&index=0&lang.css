@@ -1,0 +1,9 @@
+import {createHotContext as __vite__createHotContext} from "/@vite/client";
+import.meta.hot = __vite__createHotContext("/src/components/HeaderLink.astro?astro&type=style&index=0&lang.css");
+import {updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle} from "/@vite/client"
+const __vite__id = "/Users/mwilson/projects/hobbitronics.github.io/astro/src/components/HeaderLink.astro?astro&type=style&index=0&lang.css"
+const __vite__css = "a[data-astro-cid-evkijfd6] {\n  display: inline-block;\n  text-decoration: none;\n}\n\na[data-astro-cid-evkijfd6].active {\n  font-weight: bolder;\n  text-decoration: underline;\n}\n"
+__vite__updateStyle(__vite__id, __vite__css)
+import.meta.hot.accept()
+import.meta.hot.prune( () => __vite__removeStyle(__vite__id))
+// edit

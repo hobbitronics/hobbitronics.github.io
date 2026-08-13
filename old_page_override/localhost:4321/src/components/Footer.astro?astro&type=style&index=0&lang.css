@@ -1,0 +1,9 @@
+import {createHotContext as __vite__createHotContext} from "/@vite/client";
+import.meta.hot = __vite__createHotContext("/src/components/Footer.astro?astro&type=style&index=0&lang.css");
+import {updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle} from "/@vite/client"
+const __vite__id = "/Users/mwilson/projects/hobbitronics.github.io/astro/src/components/Footer.astro?astro&type=style&index=0&lang.css"
+const __vite__css = "footer[data-astro-cid-jo6i4kqk] {\n  padding: 3em 1em 2em;\n  border-top: 1px solid var(--border);\n  color: var(--text-secondary);\n  text-align: center;\n  font-size: .9em;\n  margin-top: 3em;\n}\n\n.social-links[data-astro-cid-jo6i4kqk] {\n  display: flex;\n  justify-content: center;\n  gap: 1.5em;\n  margin-top: 1.5em;\n}\n\n.social-links[data-astro-cid-jo6i4kqk] a[data-astro-cid-jo6i4kqk] {\n  text-decoration: none;\n  color: var(--text-secondary);\n  transition: color .2s;\n}\n\n.social-links[data-astro-cid-jo6i4kqk] a[data-astro-cid-jo6i4kqk]:hover {\n  color: var(--accent);\n}\n\n.social-links[data-astro-cid-jo6i4kqk] svg[data-astro-cid-jo6i4kqk] {\n  width: 24px;\n  height: 24px;\n}\n"
+__vite__updateStyle(__vite__id, __vite__css)
+import.meta.hot.accept()
+import.meta.hot.prune( () => __vite__removeStyle(__vite__id))
+// edit
