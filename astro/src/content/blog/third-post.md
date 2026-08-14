@@ -26,5 +26,8 @@ Credit to Nebula Photos
 - [You don't need expensive gear to photograph other galaxies](https://youtu.be/aB5IiKiGDE8?si=eOeh5WwE8wZOm3XP)
 - [Orion Nebula WITHOUT a Star Tracker or Telescope, Start to Finish, DSLR Astrophotography](https://youtu.be/iuMZG-SyDCU?si=nmw_MoxhhMjlU9s7)
 
-My second feable attempt at image stacking. 20 images shot at 55mm.
+My third feable attempt at image stacking. 20 images shot at 55mm. Edited in Darktable.
 ![Stacked astro photo](https://nextcloudpi.wilson-cloud.us/index.php/s/pb24wtLwikMnrBx/download)
+
+My second feable attempt at image stacking. 30 images shot at 55mm. Edited in Darktable.
+![Stacked astro photo](https://nextcloudpi.wilson-cloud.us/index.php/s/tQp2Fez2tmjtkxi)
