@@ -23,13 +23,15 @@ The AMD Athlon 64 5700 build was the first machine I chose on purpose, part by p
 5. Custom AMD Athlon 64 XII 6400 build
 Then came the Athlon 64 X2 6400, a dual-core CPU and a GeForce 8600GT 512MB in the same case as the build above, with 4GB DDR2 RAM at 800MHz. Not extravagant, exactly, but enough to make the old case feel briefly heroic while playing Oblivion.
 
+6. Lampstand iMac, 700MHz
+The 700MHz lampstand iMac was the iconic lamp-arm iMac era machine, and I wish I still had it in my parents' basement. My first Unix-like machine, and maybe the first computer I owned that seemed designed by someone who believed computers could be furniture.
+
 ## Laptops and nearby side quests
 
 1. Dell Inspiron 5000 from University of Iowa Surplus
 The Dell Inspiron 5000 from University of Iowa Surplus had a 1GHz PIII and a broken lid latch, but it ran Counter-Strike surprisingly well and felt better than some Pentium 4 systems I used around the same time. If I remember right, it likely had somewhere around 512MB of RAM.
 
-2. Lampstand iMac, 700MHz
-The 700MHz lampstand iMac was the iconic lamp-arm iMac era machine, and I wish I still had it in my parents' basement. My first Unix-like machine, and maybe the first computer I owned that seemed designed by someone who believed computers could be furniture.
+2. The [2007 17-inch MacBook Pro](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-2-duo-2.6-17-santa-rosa-specs.html), with a Core 2 Duo T7800 and 4GB RAM, runs Manjaro Linux okay with an SSD and has the 1900x1200 screen. It runs hot!
 
 3. Acer Atom netbook (circa 2009, Windows)
 The Acer Atom netbook, circa 2009, was great for taking notes in A&P class. Dark blue, single-core, likely an Atom N2xx-era configuration with 1GB RAM. A modest little slab of compromise, but it fit in a bag and did its job.
@@ -69,9 +71,6 @@ The 2013 15-inch MacBook Pro became a Windows 11 experiment. I put Boot Camp and
 
 15. Cheap Acer clamshell laptop with 7th-gen i7 (Proxmox backup server)
 The cheap Acer clamshell with a 7th-gen i7 became a Proxmox backup server. Sometimes it bricks itself, then revives after sitting unpowered for a week like a dramatic Victorian patient. I had two HDDs stuffed into it; one replaced the DVD tray. There is dignity in storage, even when it rattles.
-
-16. [2007 17" mbp](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-2-duo-2.6-17-santa-rosa-specs.html) with core 2 duo T7800 and 4GB ram. It runs Manjaro linux ok with an ssd and has the 1900x1200 screen. It runs hot enough to fry an egg on.
-The [2007 17-inch MacBook Pro](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-2-duo-2.6-17-santa-rosa-specs.html), with a Core 2 Duo T7800 and 4GB RAM, runs Manjaro Linux okay with an SSD and has the 1900x1200 screen. It runs hot!
 
 None of these computers were perfect. A few were barely sensible. But each one widened the map a little: games, Unix, school notes, development, Linux, storage, repair, rescue, failure, persistence. The machines came and went, or stayed too long in basements, or became servers after their screens gave out. Their resale value was beside the point.
 
