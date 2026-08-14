@@ -30,4 +30,4 @@ My third feable attempt at image stacking. 20 images shot at 55mm. Edited in Dar
 ![Stacked astro photo](https://nextcloudpi.wilson-cloud.us/index.php/s/pb24wtLwikMnrBx/download)
 
 My second feable attempt at image stacking. 30 images shot at 55mm. Edited in Darktable.
-![Stacked astro photo](https://nextcloudpi.wilson-cloud.us/index.php/s/tQp2Fez2tmjtkxi)
+![Stacked astro photo](https://nextcloudpi.wilson-cloud.us/index.php/s/tQp2Fez2tmjtkxi/download)
