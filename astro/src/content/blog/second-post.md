@@ -9,7 +9,7 @@ I have owned a lot of computers over the years, though still fewer than my dad. 
 ## Early desktops
 
 1. 386 era box
-The 386 was less a computer than a first cockpit. I learned to shoot down Focke-Wulf Fw 190s and MiG-19s in Chuck Yeager's Air Combat on this machine, which is to say I learned that a keyboard could become a sky if the pixels were persuasive enough.
+The 386 was less a computer than a first cockpit. I learned to shoot down Focke-Wulf Fw 190s and MiG-19s in Chuck Yeager's Air Combat on this machine, which is to say I learned that a CRT could become a sky if the pixels were persuasive enough.
 
 2. 486 upgrade phase
 The 486 was the first clear step up from the 386, the first machine that made responsiveness feel like a luxury. Especially the turbo button, that tiny promise of more. It played X-Wing well and Chuck Yeager's Air Combat ran much smoother. That was about the limit of what it ran smoothly, but limits are easier to forgive when they arrive with a button labeled turbo.
