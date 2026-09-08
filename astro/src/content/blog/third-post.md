@@ -27,7 +27,7 @@ Credit to Nebula Photos
 - [Orion Nebula WITHOUT a Star Tracker or Telescope, Start to Finish, DSLR Astrophotography](https://youtu.be/iuMZG-SyDCU?si=nmw_MoxhhMjlU9s7)
 
 My third feable attempt at image stacking. 20 images shot at 55mm. Edited in Darktable (revised using color balange rgb module).
-![Stacked astro photo](/images/2026aug13a_02.avif)
+![Stacked astro photo](https://hobbitronics.github.io/images/2026aug13a_02.avif)
 
 My second feable attempt at image stacking. 30 images shot at 55mm. Edited in Darktable.
-![Stacked astro photo](/images/2026aug122156.avif)
+![Stacked astro photo](https://hobbitronics.github.io/images/2026aug122156.avif)
